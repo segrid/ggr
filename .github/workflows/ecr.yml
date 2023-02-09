@@ -1,0 +1,45 @@
+name: release
+
+on:
+  push:
+    branches:
+      - segrid
+
+jobs:
+  golang:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: ~1.19.3
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Test
+        run: ci/test.sh
+
+      - name: Build
+        run: ci/build.sh
+
+      - name: Build Docker Image and Push to ECR
+        env:
+          BRANCH_NAME: segrid
+          ECR_IMAGE:   public.ecr.aws/orienlabs/ggr
+        run: |
+          echo "Branch name is $BRANCH_NAME"
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
+          export DOCKER_BUILDKIT=0
+          export COMPOSE_DOCKER_CLI_BUILD=0
+          docker build -t $ECR_IMAGE:$BRANCH_NAME .
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/orienlabs
+          docker push $ECR_IMAGE:$BRANCH_NAME
