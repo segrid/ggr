@@ -384,8 +384,8 @@ loop:
 		case browserFailed:
 			hosts = append(hosts[:i], hosts[i+1:]...)
 		case seleniumError:
-			excludedHosts.add(h.Net())
-			excludedRegions.add(h.Region)
+			//excludedHosts.add(h.Net())
+			//excludedRegions.add(h.Region)
 			hosts, version, excludedRegions = browsers.find(browser, version, platform, excludedHosts, excludedRegions)
 		}
 		errMsg := browserErrMsg(resp)
