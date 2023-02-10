@@ -334,10 +334,10 @@ func route(w http.ResponseWriter, r *http.Request) {
 loop:
 	for h, i := choose(hosts); ; h, i = choose(hosts) {
 		count++
-		//r.Header.Del("X-Selenoid-No-Wait")
-		//if len(hosts) != 1 {
+		r.Header.Del("X-Selenoid-No-Wait")
+		if len(hosts) != 1 {
 			r.Header.Add("X-Selenoid-No-Wait", "")
-		//}
+		}
 		if h == nil {
 			break loop
 		}
@@ -383,7 +383,6 @@ loop:
 			return
 		case browserFailed:
 			hosts = append(hosts[:i], hosts[i+1:]...)
-			hosts, version, excludedRegions = browsers.find(browser, version, platform, excludedHosts, excludedRegions)
 		case seleniumError:
 			excludedHosts.add(h.Net())
 			excludedRegions.add(h.Region)
