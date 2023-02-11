@@ -60,7 +60,7 @@ func (b *ggrBrowsers) find(browser, version string, platform string, excludedHos
 			for _, v := range b.Versions {
 				if strings.HasPrefix(v.Number, version) && (v.Platform == "" || strings.HasPrefix(v.Platform, platform)) {
 					version = v.Number
-				next:
+				//next:
 					for _, r := range v.Regions {
 						//if excludedRegions.size() == len(v.Regions) {
 							excludedRegions = newSet()
