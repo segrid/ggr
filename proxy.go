@@ -327,7 +327,7 @@ func route(w http.ResponseWriter, r *http.Request) {
 
 	if len(hosts) == 0 {
 		reply(w, errMsg(fmt.Sprintf("unsupported browser: %s", fmtBrowser(browser, version, platform, labels))), http.StatusNotFound)
-		log.Printf("[%d] [%.2fs] [UNSUPPORTED_BROWSER] [%s] [%s] [%s] [-] [-] [-] [-]\n", id, secondsSince(start), user, remote, fmtBrowser(browser, version, platform, labels))
+		log.Printf("[%d] [%.2fs] [UNSUPPORTED_BROWSER] [%s] [%s] [%s] [EXCLUDED_HOSTS: %s] [EXCLUDED_REGIONS: %s] [-] [-]\n", id, secondsSince(start), user, remote, fmtBrowser(browser, version, platform, labels), excludedHosts, excludedRegions)
 		return
 	}
 	lastHostError := ""
