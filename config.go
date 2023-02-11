@@ -62,16 +62,16 @@ func (b *ggrBrowsers) find(browser, version string, platform string, excludedHos
 					version = v.Number
 				next:
 					for _, r := range v.Regions {
-						if excludedRegions.size() == len(v.Regions) {
+						//if excludedRegions.size() == len(v.Regions) {
 							excludedRegions = newSet()
-						}
-						if excludedRegions.contains(r.Name) {
-							continue next
-						}
+						//}
+						//if excludedRegions.contains(r.Name) {
+						//	continue next
+						//}
 						for _, h := range r.Hosts {
-							if !excludedHosts.contains(h.Net()) {
+							//if !excludedHosts.contains(h.Net()) {
 								hosts = append(hosts, h)
-							}
+							//}
 						}
 					}
 				}
