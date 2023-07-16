@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Docker Image and Push to ECR
         env:
-          BRANCH_NAME: segrid
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
           ECR_IMAGE:   public.ecr.aws/orienlabs/ggr
         run: |
           echo "Branch name is $BRANCH_NAME"
@@ -37,6 +37,25 @@ jobs:
           aws configure set default.region us-east-1
           export DOCKER_BUILDKIT=0
           export COMPOSE_DOCKER_CLI_BUILD=0
-          docker build -t $ECR_IMAGE:$BRANCH_NAME .
+          docker build -t $ECR_IMAGE:$BRANCH_NAME -t orienlabs.azurecr.io/ggr:$BRANCH_NAME .
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/orienlabs
           docker push $ECR_IMAGE:$BRANCH_NAME
+
+      - name: 'Login to Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Login to orienlabs.azurecr.io'
+        uses: azure/docker-login@v1
+        with:
+          login-server: orienlabs.azurecr.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Push Browser Images to Azure ECR
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: |
+          docker push orienlabs.azurecr.io/ggr:$BRANCH_NAME
+          
